@@ -1,0 +1,27 @@
+import cv2
+import moviepy.editor as mpy
+
+# Carica il video
+video = mpy.VideoFileClip("C:\\Users\\gn\\Downloads\\apogio\\IMG.MP4")
+
+# Assegna il valore di fps alla variabile
+fps = video.fps
+
+# Converti il video in un array di frame
+frames = []
+for frame in video.iter_frames():
+    # Converti il frame in un array di pixel
+    pixels = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # Trova le emoji nel frame
+    emojis = cv2.findContours(pixels, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Rimuovi le emoji dal frame
+    for emoji in emojis:
+        x, y, w, h = cv2.boundingRect(emoji)
+        pixels[y:y+h, x:x+w] = 0
+    # Converti il frame in un nuovo array di pixel
+    pixels = cv2.cvtColor(pixels, cv2.COLOR_RGB2BGR)
+    # Aggiungi il frame al array di frame
+    frames.append(pixels)
+
+# Salva il video modificato
+mpy.ImageSequenceClip(frames, fps=fps).write_videofile("C:\\Users\\gn\\Downloads\\apogio\\video\\IMG.MP4")
